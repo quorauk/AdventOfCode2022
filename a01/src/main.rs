@@ -1,39 +1,45 @@
-use std::fs::File;
-use std::io::Read;
+#![feature(test)]
 
-#[derive(Debug)]
-struct Elf {
-    pub calories: i32
-}
+extern crate test;
 
-fn load_elves_from_file(file_name: &str) -> Vec<Elf> {
-    let file = File::open(file_name);
-    let mut elves = Vec::new();
-    match file {
-        Result::Err(_) => Vec::new(),
-        Result::Ok(mut file) => {
-            let mut contents = String::new();
-            let _ = file.read_to_string(&mut contents);
-            let splits = contents.as_str().split("\n\n");
-            for split in splits {
-                let mut calories = 0;
-                for calorie_count in split.split("\n") {
-                    if let Result::Ok(calorie_i) = calorie_count.parse::<i32>() {
-                        calories += calorie_i;
-                    }
-                }
-                elves.push(Elf {
-                    calories: calories
-                });
-            }
-            elves
-        }
-    }
+fn new(filename: &str) -> (i32, i32) {
+    let mut elves = get_elves(filename);
+    elves.sort_by(|a, b| b.cmp(a));
+    (elves[0], elves.iter().take(3).sum())
 }
 
 fn main() {
-    let mut elves = load_elves_from_file("./input.txt");
-    println!("{:?}", elves);
-    elves.sort_by(|a, b| a.calories.cmp(&b.calories));
-    println!("{:?}", elves.iter().rev().take(3).map(|a| a.calories).sum::<i32>())
+    let (p1, p2) = new("input.txt");
+    println!("pt1: {:?}", p1);
+    println!("pt2: {:?}", p2)
+}
+
+fn get_elves(filename: &str) -> Vec<i32> {
+    let input = std::fs::read_to_string(filename).unwrap();
+    input.split("\n\n").map(|elf| elf.split("\n").map(|x| x.parse::<i32>().unwrap_or(0)).sum()).collect()
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use test::Bencher;
+
+  #[test]
+  fn it_works() {
+    assert_eq!(new("input.txt"), (69289, 205615));
+  }
+
+  #[bench]
+  fn bench_loading(b: &mut Bencher) {
+    b.iter(||
+        get_elves("input.txt")
+    )
+  }
+
+  #[bench]
+  fn bench_all(b: &mut Bencher) {
+    b.iter(||
+        new("input.txt")
+    )
+  }
 }
