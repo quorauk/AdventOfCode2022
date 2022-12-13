@@ -10,10 +10,9 @@ fn read_trees(string: String) -> Vec<Vec<i8>> {
             }
         }
         trees.push(tree_line)
-    };
+    }
     trees
 }
-
 
 fn flip_horizontal<T>(grid: &mut Vec<Vec<T>>) {
     for row in grid {
@@ -21,15 +20,22 @@ fn flip_horizontal<T>(grid: &mut Vec<Vec<T>>) {
     }
 }
 
-fn transpose<T>(grid: Vec<Vec<T>>) -> Vec<Vec<T>> where T: Clone {
+fn transpose<T>(grid: Vec<Vec<T>>) -> Vec<Vec<T>>
+where
+    T: Clone,
+{
     (0..grid[0].len())
-    .map(|i| grid.iter().map(|inner| inner[i].clone()).collect::<Vec<T>>())
-    .collect()
+        .map(|i| {
+            grid.iter()
+                .map(|inner| inner[i].clone())
+                .collect::<Vec<T>>()
+        })
+        .collect()
 }
 
 fn look_in_dir(trees: &Vec<Vec<i8>>, visible: &mut Vec<Vec<bool>>) {
-    for (row, line)in trees.iter().enumerate() {
-        let mut current_max : i8 = -1;
+    for (row, line) in trees.iter().enumerate() {
+        let mut current_max: i8 = -1;
         for (col, tree) in line.iter().enumerate() {
             if tree > &current_max {
                 current_max = tree.clone();
@@ -40,7 +46,7 @@ fn look_in_dir(trees: &Vec<Vec<i8>>, visible: &mut Vec<Vec<bool>>) {
 }
 
 struct Grid {
-    grid: Vec<Vec<i8>>
+    grid: Vec<Vec<i8>>,
 }
 
 impl Grid {
@@ -53,7 +59,7 @@ impl Grid {
     }
 
     fn down(&self, x: usize, y: usize) -> Vec<i8> {
-        (x+1..self.grid.len()).map(|x| self.grid[x][y]).collect()
+        (x + 1..self.grid.len()).map(|x| self.grid[x][y]).collect()
     }
 
     fn left(&self, x: usize, y: usize) -> Vec<i8> {
@@ -65,14 +71,16 @@ impl Grid {
     }
 
     fn right(&self, x: usize, y: usize) -> Vec<i8> {
-        (y+1..self.grid[x].len()).map(|y| self.grid[x][y]).collect()
+        (y + 1..self.grid[x].len())
+            .map(|y| self.grid[x][y])
+            .collect()
     }
 }
 
 fn senic_score_for(dir: Vec<i8>, tree: &i8) -> i32 {
     for i in dir.iter().enumerate() {
         if i.1 >= tree {
-            return (i.0 + 1) as i32
+            return (i.0 + 1) as i32;
         }
     }
     dir.len() as i32
@@ -81,9 +89,7 @@ fn senic_score_for(dir: Vec<i8>, tree: &i8) -> i32 {
 fn scenic(string: String) -> i32 {
     let mut max_scenic = -1;
     let trees = read_trees(string);
-    let grid = Grid {
-        grid: trees
-    };
+    let grid = Grid { grid: trees };
     let rows = grid.grid.len();
     let cols = grid.grid[0].len();
     for i in 0..rows {
@@ -105,7 +111,10 @@ fn scenic(string: String) -> i32 {
 
 fn visible(string: String) -> usize {
     let mut trees = read_trees(string);
-    let mut visible_trees: Vec<Vec<bool>> = trees.iter().map(|r| r.clone().iter().map(|_| false).collect()).collect();
+    let mut visible_trees: Vec<Vec<bool>> = trees
+        .iter()
+        .map(|r| r.clone().iter().map(|_| false).collect())
+        .collect();
 
     look_in_dir(&trees, &mut visible_trees);
     flip_horizontal(&mut trees);
@@ -120,7 +129,10 @@ fn visible(string: String) -> usize {
     // trees = transpose(trees.clone());
     visible_trees = transpose(visible_trees.clone());
 
-    visible_trees.iter().map(|r| r.iter().filter(|x| **x == true).map(|x| x.clone()).count()).sum()
+    visible_trees
+        .iter()
+        .map(|r| r.iter().filter(|x| **x == true).map(|x| x.clone()).count())
+        .sum()
 }
 
 fn main() {
@@ -136,8 +148,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-  use std::{fs::{File}, io::Read};
     use super::*;
+    use std::{fs::File, io::Read};
 
     #[test]
     fn test_visible() {
@@ -145,18 +157,12 @@ mod tests {
         assert!(file.is_ok());
         let mut contents = String::new();
         let _ = file.unwrap().read_to_string(&mut contents);
-        assert_eq!(
-            visible(contents),
-            21
-        );
+        assert_eq!(visible(contents), 21);
         let file = File::open("./test copy.txt");
         assert!(file.is_ok());
         let mut contents = String::new();
         let _ = file.unwrap().read_to_string(&mut contents);
-        assert_eq!(
-            visible(contents),
-            6
-        )
+        assert_eq!(visible(contents), 6)
     }
 
     #[test]
@@ -165,10 +171,7 @@ mod tests {
         assert!(file.is_ok());
         let mut contents = String::new();
         let _ = file.unwrap().read_to_string(&mut contents);
-        assert_eq!(
-            scenic(contents),
-            8
-        );
+        assert_eq!(scenic(contents), 8);
     }
 
     #[test]
@@ -176,11 +179,7 @@ mod tests {
         let x = String::from("159\n139\n104");
         assert_eq!(
             read_trees(x),
-            vec![
-                vec![1,5,9],
-                vec![1,3,9],
-                vec![1,0,4]
-            ]
+            vec![vec![1, 5, 9], vec![1, 3, 9], vec![1, 0, 4]]
         );
     }
 }

@@ -1,12 +1,11 @@
-use std::{
-    fs::File,
-    io::{Read},
-};
 use regex::Regex;
+use std::{fs::File, io::Read};
 
 fn read_line(str: String) -> Vec<String> {
     let re = Regex::new(r"[\[|\s](?P<val>.)[\]|\s]\s?").unwrap();
-    re.captures_iter(&str).map(|cap| cap.name("val").unwrap().as_str().to_string()).collect()
+    re.captures_iter(&str)
+        .map(|cap| cap.name("val").unwrap().as_str().to_string())
+        .collect()
 }
 
 fn is_cargo_line(line: &str) -> bool {
@@ -43,10 +42,11 @@ fn read_stacks(str: &String) -> Vec<Vec<String>> {
     new_stack
 }
 
-
 #[derive(Debug, PartialEq)]
 struct Move {
-    pub x: usize, pub from: usize, pub to: usize
+    pub x: usize,
+    pub from: usize,
+    pub to: usize,
 }
 
 fn read_instructions(str: &String) -> Vec<Move> {
@@ -57,7 +57,7 @@ fn read_instructions(str: &String) -> Vec<Move> {
             if let Some(cap) = re.captures(line) {
                 let x = cap.name("x").unwrap().as_str().parse().unwrap();
                 let from = cap.name("from").unwrap().as_str().parse().unwrap();
-                let to= cap.name("to").unwrap().as_str().parse().unwrap();
+                let to = cap.name("to").unwrap().as_str().parse().unwrap();
                 instructions.push(Move { x, from, to })
             }
         }
@@ -106,7 +106,7 @@ fn main() {
     let file = File::open("./input.txt");
     let mut file = match file {
         Err(_) => return,
-        Ok(file) => file
+        Ok(file) => file,
     };
     let mut contents = String::new();
     let _ = file.read_to_string(&mut contents);
@@ -116,56 +116,52 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-  use std::vec;
+    use std::vec;
 
-use super::*;
-  #[test]
-  fn can_read_lines() {
-    assert_eq!(
-        read_line("    [D]     ".to_string()),
-        vec![" ", "D", " "]
-    )
-  }
+    use super::*;
+    #[test]
+    fn can_read_lines() {
+        assert_eq!(read_line("    [D]     ".to_string()), vec![" ", "D", " "])
+    }
 
-  #[test]
-  fn can_read_stacks() {
-    assert_eq!(
-        read_stacks(&"    [D]    \n[N] [C]    \n[Z] [M] [P] \n 1   2   3 ".to_string()),
-        vec![vec!["Z", "N"], vec!["M", "C", "D"], vec!["P"]]
-    )
-  }
+    #[test]
+    fn can_read_stacks() {
+        assert_eq!(
+            read_stacks(&"    [D]    \n[N] [C]    \n[Z] [M] [P] \n 1   2   3 ".to_string()),
+            vec![vec!["Z", "N"], vec!["M", "C", "D"], vec!["P"]]
+        )
+    }
 
-  #[test]
-  fn num_line() {
-    assert_eq!(
-        is_cargo_line("    [D]     "),
-        true
-    );
+    #[test]
+    fn num_line() {
+        assert_eq!(is_cargo_line("    [D]     "), true);
 
-    assert_eq!(
-        is_cargo_line(" 1   2   3 "),
-        false
-    );
-  }
+        assert_eq!(is_cargo_line(" 1   2   3 "), false);
+    }
 
-  #[test]
-  fn test_read_move() {
-    assert_eq!(
-        *read_instructions(&String::from("move 1 from 2 to 1\n")).first().unwrap(),
-        Move { x: 1, from: 2, to: 1 }
-    );
-  }
+    #[test]
+    fn test_read_move() {
+        assert_eq!(
+            *read_instructions(&String::from("move 1 from 2 to 1\n"))
+                .first()
+                .unwrap(),
+            Move {
+                x: 1,
+                from: 2,
+                to: 1
+            }
+        );
+    }
 
-  #[test]
-  fn integrate() {
-    let file = File::open("./test.txt");
-    let mut file = match file {
-        Err(_) => return,
-        Ok(file) => file
-    };
-    let mut contents = String::new();
-    let _ = file.read_to_string(&mut contents);
-    assert_eq!(handle_instructions(&contents), "DCP");
-  }
+    #[test]
+    fn integrate() {
+        let file = File::open("./test.txt");
+        let mut file = match file {
+            Err(_) => return,
+            Ok(file) => file,
+        };
+        let mut contents = String::new();
+        let _ = file.read_to_string(&mut contents);
+        assert_eq!(handle_instructions(&contents), "DCP");
+    }
 }
-

@@ -1,4 +1,4 @@
-use std::{io::{Read}, fs::File};
+use std::{fs::File, io::Read};
 
 struct Rucksack {
     left: String,

@@ -10,7 +10,11 @@ struct WeirdCPU {
 
 impl WeirdCPU {
     fn new() -> Self {
-        WeirdCPU { cycle: 0, x: 1, signal_strength: 0}
+        WeirdCPU {
+            cycle: 0,
+            x: 1,
+            signal_strength: 0,
+        }
     }
 
     fn run(&mut self, cmd: Command) {
@@ -20,7 +24,7 @@ impl WeirdCPU {
                 self.next_cycle();
                 self.next_cycle();
                 self.x += amount;
-            },
+            }
         }
     }
 
@@ -28,7 +32,7 @@ impl WeirdCPU {
         if &self.cycle % 40 == 0 {
             print!("\n");
         }
-        if (self.cycle % 40) >= self.x - 1 &&  (self.cycle % 40) <= self.x + 1 {
+        if (self.cycle % 40) >= self.x - 1 && (self.cycle % 40) <= self.x + 1 {
             print!("#");
         } else {
             print!(".");
@@ -36,7 +40,6 @@ impl WeirdCPU {
         self.cycle += 1;
         if [20, 60, 100, 140, 180, 220].contains(&self.cycle) {
             self.signal_strength += self.cycle * self.x
-
         }
     }
 }
@@ -44,7 +47,7 @@ impl WeirdCPU {
 #[derive(Debug, PartialEq)]
 enum Command {
     Noop,
-    Add(i32)
+    Add(i32),
 }
 
 fn load_instructions(filename: String) -> Vec<Command> {
@@ -77,18 +80,15 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn example_code() {
-    let instructions = load_instructions("test_2.txt".to_string());
-    let mut cpu = WeirdCPU::new();
-    for instruction in instructions {
-        cpu.run(instruction)
+    #[test]
+    fn example_code() {
+        let instructions = load_instructions("test_2.txt".to_string());
+        let mut cpu = WeirdCPU::new();
+        for instruction in instructions {
+            cpu.run(instruction)
+        }
+        assert_eq!(cpu.signal_strength, 13140);
     }
-    assert_eq!(
-        cpu.signal_strength,
-        13140
-    );
-  }
 }

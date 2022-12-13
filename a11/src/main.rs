@@ -13,7 +13,7 @@ struct Monkey {
 enum Operation {
     Mul(i64),
     Add(i64),
-    Pow
+    Pow,
 }
 
 impl Monkey {
@@ -42,8 +42,11 @@ impl Monkey {
 }
 
 fn parse_monkey(monkey: &str, test_relief: i64) -> Monkey {
-    let lines : Vec<&str> = monkey.split('\n').collect();
-    let items = lines[1][18..].split(", ").map(|x| x.parse().unwrap()).collect();
+    let lines: Vec<&str> = monkey.split('\n').collect();
+    let items = lines[1][18..]
+        .split(", ")
+        .map(|x| x.parse().unwrap())
+        .collect();
     let test = lines[3][21..].parse().unwrap();
     let pos_monkey = lines[4][29..].parse().unwrap();
     let neg_monkey = lines[5][30..].parse().unwrap();
@@ -65,7 +68,7 @@ fn parse_monkey(monkey: &str, test_relief: i64) -> Monkey {
         pos_monkey,
         neg_monkey,
         inspections: 0,
-        test_relief
+        test_relief,
     }
 }
 
@@ -84,7 +87,10 @@ fn main() {
         }
     }
     for i in 0..monkeys.len() {
-        println!("Monkey {} inspected items {} times.", i, monkeys[i].inspections)
+        println!(
+            "Monkey {} inspected items {} times.",
+            i, monkeys[i].inspections
+        )
     }
     monkeys.sort_by(|a, b| b.inspections.cmp(&a.inspections));
     println!("pt1: {}", monkeys[0].inspections * monkeys[1].inspections);
@@ -105,9 +111,11 @@ fn main() {
         }
     }
     for i in 0..monkeys.len() {
-        println!("Monkey {} inspected items {} times.", i, monkeys[i].inspections)
+        println!(
+            "Monkey {} inspected items {} times.",
+            i, monkeys[i].inspections
+        )
     }
     monkeys.sort_by(|a, b| b.inspections.cmp(&a.inspections));
     println!("pt2: {}", monkeys[0].inspections * monkeys[1].inspections);
-
 }
